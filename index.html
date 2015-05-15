@@ -1,5 +1,7 @@
 <html>
 <head>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
 	<style type="text/css">
 		html, body {
 			position: fixed;
@@ -14,78 +16,63 @@
 		#image {
 			position: fixed;
 
+			left: 50%;
+			top: 50%;
+
+			-webkit-transform: translate3d(-50%, -50%, 0);
+
 			background-color: blue;
 		}
+
+		#viewportRatio, #imageRatio {
+			color: #ffffff;
+			-webkit-transform: translate3d(0, 0, 0);
+		}
+
+		#imageRatio::before {
+			content: 'image ratio: ';
+		}
+
+		#viewportRatio::before {
+			content: 'viewport ratio: ';
+		}
 	</style>
-
-<script type="text/javascript">
-	var imageWidth,
-		imageHeight,
-		imageRatio,
-		viewportWidth = window.innerWidth,
-		viewportHeight = window.innerHeight,
-		viewportRatio;
-
-	function resizeImage() {
-		if (viewportHeight > viewportWidth) {
-			imageHeight = 480;
-			imageWidth = 320;
-			imageRatio = imageWidth/imageHeight;
-			viewportRatio = viewportWidth/viewportHeight;	
-
-			if (imageRatio < viewportRatio) {
-				imageWidth = viewportHeight * imageRatio;
-				imageHeight = viewportHeight;
-			}
-
-			else if (imageRatio > viewportRatio) {
-				imageWidth = viewportWidth;
-				imageHeight = viewportWidth / imageRatio; 			
-			}					
-		}	
-
-		else if (viewportHeight < viewportWidth) {
-			imageHeight = 320;
-			imageWidth = 480;
-			imageRatio = imageWidth/imageHeight;
-			viewportRatio = viewportWidth/viewportHeight;	
-
-			if (imageRatio < viewportRatio) {
-				imageWidth = viewportHeight * imageRatio;
-				imageHeight = viewportHeight;
-			}
-
-			else if (imageRatio > viewportRatio) {
-				imageWidth = viewportWidth;
-				imageHeight = viewportWidth / imageRatio; 			
-			}
-		}	
-
-		imageRatio = imageWidth/imageHeight;
-		viewportRatio = viewportWidth/viewportHeight;
-
-		viewportWidth = window.innerWidth;
-		viewportHeight = window.innerHeight;			
-
-		document.getElementById('image').style.width = imageWidth + 'px';
-		document.getElementById('image').style.height = imageHeight + 'px';				
-		document.getElementById('image').style.left = '50%';
-		document.getElementById('image').style.top = '50%';
-		document.getElementById('image').style.webkitTransform = 'translate3d(-50%, -50%, 0)';		
-	}
-
-	window.onresize = function () {
-		resizeImage();
-	};		
-
-	window.onload = function () {
-		resizeImage();		
-	}
-</script>	
 </head>
 
 <body>
 	<div id='image'></div>
+	<div id='imageRatio'></div>
+	<div id='viewportRatio'></div>
+
+	<script type="text/javascript">
+		var imageWidth,
+			imageHeight,
+			imageRatio,
+			viewportWidth,
+			viewportHeight,
+			viewportRatio;
+
+		function resizeImage() {
+			viewportWidth = window.innerWidth;
+			viewportHeight = window.innerHeight;
+
+			(viewportHeight > viewportWidth ? (imageHeight = 480, imageWidth = 320) : (imageHeight = 320, imageWidth = 480));
+
+			imageRatio = imageWidth/imageHeight;
+			viewportRatio = viewportWidth/viewportHeight;	
+
+			(imageRatio < viewportRatio ? (imageWidth = viewportHeight * imageRatio, imageHeight = viewportHeight) : (imageWidth = viewportWidth, imageHeight = viewportWidth / imageRatio));
+
+			document.getElementById('imageRatio').innerHTML = imageRatio;			
+			document.getElementById('viewportRatio').innerHTML = viewportRatio;			
+
+			document.getElementById('image').style.width = imageWidth + 'px';
+			document.getElementById('image').style.height = imageHeight + 'px';					
+		}
+
+		window.onresize = resizeImage;		
+		window.onload = resizeImage;		
+	</script>	
 </body>
 
 </html>
